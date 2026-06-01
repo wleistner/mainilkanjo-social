@@ -1,4 +1,4 @@
-name: Beitrag erzeugen & zur Freigabe mailen
+name: Beitrag erzeugen & freigeben
 
 on:
   schedule:
@@ -16,12 +16,14 @@ concurrency:
 jobs:
   generate:
     runs-on: ubuntu-latest
+    outputs:
+      slug: ${{ steps.gen.outputs.slug }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
-          node-version: '20'
+          node-version: '24'
 
       - name: Markenfonts installieren (Montserrat + Inter)
         run: |
@@ -39,6 +41,7 @@ jobs:
         run: npm run --silent generate
 
       - name: Draft committen & pushen
+        if: steps.gen.outputs.slug != ''
         run: |
           git config user.name "mainilkanjo-social-bot"
           git config user.email "bot@users.noreply.github.com"
@@ -46,17 +49,64 @@ jobs:
           git commit -m "draft: ${{ steps.gen.outputs.slug }}" || echo "nichts zu committen"
           git push
 
-      - name: Freigabe-Mail senden
+      - name: Vorschau in die Zusammenfassung schreiben
         if: steps.gen.outputs.slug != ''
+        run: |
+          SLUG="${{ steps.gen.outputs.slug }}"
+          HEAD=$(jq -r .headline "pending/$SLUG.json")
+          CAP=$(jq -r .caption "pending/$SLUG.json")
+          {
+            echo "## 📣 Neuer Beitrag – wartet auf deine Freigabe"
+            echo ""
+            echo "**$HEAD**"
+            echo ""
+            echo "![Motiv](https://raw.githubusercontent.com/${{ github.repository }}/main/pending/$SLUG.jpg)"
+            echo ""
+            echo "$CAP"
+            echo ""
+            echo "---"
+            echo "**Freigeben:** oben auf dieser Seite **\"Review deployments\" → \"freigabe\" ankreuzen → \"Approve and deploy\"**."
+            echo "Der Beitrag geht dann automatisch auf Instagram + Facebook."
+            echo ""
+            echo "**Verwerfen:** stattdessen **\"Reject\"** klicken – dann passiert nichts."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  publish:
+    needs: generate
+    if: needs.generate.outputs.slug != ''
+    runs-on: ubuntu-latest
+    environment: freigabe   # erzwingt manuelle Freigabe (Pflicht-Reviewer in den Repo-Settings)
+    concurrency:
+      group: publish-${{ needs.generate.outputs.slug }}
+      cancel-in-progress: false
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main   # holt den frisch gepushten Draft-Commit
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: '24'
+
+      - run: npm ci
+
+      - name: Auf Instagram + Facebook veröffentlichen
         env:
-          SLUG: ${{ steps.gen.outputs.slug }}
-          SMTP_HOST: ${{ secrets.SMTP_HOST }}
-          SMTP_PORT: ${{ secrets.SMTP_PORT }}
-          SMTP_USER: ${{ secrets.SMTP_USER }}
-          SMTP_PASS: ${{ secrets.SMTP_PASS }}
-          SMTP_FROM: ${{ secrets.SMTP_FROM }}
-          REVIEW_EMAIL_TO: ${{ secrets.REVIEW_EMAIL_TO }}
-          APPROVE_ENDPOINT: ${{ secrets.APPROVE_ENDPOINT }}
-          APPROVE_SECRET: ${{ secrets.APPROVE_SECRET }}
+          SLUG: ${{ needs.generate.outputs.slug }}
+          ACTION: publish
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
           IMAGE_BASE_URL: ${{ secrets.IMAGE_BASE_URL }}
-        run: npm run --silent notify
+        run: npm run --silent publish
+
+      - name: Ergebnis committen & pushen
+        run: |
+          git config user.name "mainilkanjo-social-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git pull --rebase --autostash || true
+          git add pending published || true
+          git commit -m "published: ${{ needs.generate.outputs.slug }}" || echo "nichts zu committen"
+          git push
