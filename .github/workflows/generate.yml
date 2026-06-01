@@ -1,0 +1,62 @@
+name: Beitrag erzeugen & zur Freigabe mailen
+
+on:
+  schedule:
+    # Dienstag & Donnerstag, 07:00 UTC (= 08:00/09:00 DE). ~2 Beiträge/Woche.
+    - cron: '0 7 * * 2,4'
+  workflow_dispatch: {}   # manueller Start per Knopf möglich
+
+permissions:
+  contents: write
+
+concurrency:
+  group: generate
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Markenfonts installieren (Montserrat + Inter)
+        run: |
+          mkdir -p ~/.fonts
+          curl -sL "https://github.com/google/fonts/raw/main/ofl/montserrat/Montserrat%5Bwght%5D.ttf" -o ~/.fonts/Montserrat.ttf
+          curl -sL "https://github.com/google/fonts/raw/main/ofl/inter/Inter%5Bwght%5D.ttf" -o ~/.fonts/Inter.ttf || true
+          fc-cache -f
+
+      - run: npm ci
+
+      - name: Draft erzeugen
+        id: gen
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: npm run --silent generate
+
+      - name: Draft committen & pushen
+        run: |
+          git config user.name "mainilkanjo-social-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add pending state
+          git commit -m "draft: ${{ steps.gen.outputs.slug }}" || echo "nichts zu committen"
+          git push
+
+      - name: Freigabe-Mail senden
+        if: steps.gen.outputs.slug != ''
+        env:
+          SLUG: ${{ steps.gen.outputs.slug }}
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASS: ${{ secrets.SMTP_PASS }}
+          SMTP_FROM: ${{ secrets.SMTP_FROM }}
+          REVIEW_EMAIL_TO: ${{ secrets.REVIEW_EMAIL_TO }}
+          APPROVE_ENDPOINT: ${{ secrets.APPROVE_ENDPOINT }}
+          APPROVE_SECRET: ${{ secrets.APPROVE_SECRET }}
+          IMAGE_BASE_URL: ${{ secrets.IMAGE_BASE_URL }}
+        run: npm run --silent notify

@@ -1,0 +1,56 @@
+[
+  {
+    "id": "case-01",
+    "type": "case",
+    "branche": "Tiefkühl-Logistik · NRW",
+    "headline": "150 kWp + Speicher senken die Stromkosten eines Tiefkühlbetriebs",
+    "topic": "Photovoltaik mit Batteriespeicher für konstante Grundlast in der Lebensmittel-Kühlung",
+    "link": "https://mainilkanjo.de/",
+    "body": "Lebensmittelbetrieb mit konstanter Grundlast aus Tiefkühlung, Lager und Büro – rund 130 MWh Stromverbrauch pro Jahr, Netzbezug 23–26 ct/kWh. Lösung: bewusst verbrauchsorientiert statt maximaler Dachbelegung – 150 kWp Photovoltaik mit fest integriertem 120-kWh-Batteriespeicher. Nutzen: ca. 143 MWh Solarstrom/Jahr, davon ~103 MWh Eigenverbrauch; jährliche Energiekostenwirkung etwa 22.000–29.000 €."
+  },
+  {
+    "id": "case-02",
+    "type": "case",
+    "branche": "Gewerbeimmobilie mit Mietern · NRW",
+    "headline": "Mieterstrom + Speicher für ein Bestandsgebäude mit mehreren Gewerbemietern",
+    "topic": "Ganzheitliches PV-Maßnahmenkonzept inkl. Blitzschutz, Trafo und Mieterstrom",
+    "link": "https://mainilkanjo.de/",
+    "body": "Bestandsgebäude mit mehreren Gewerbemietern und energetischem Erneuerungsbedarf; PV-Integration erforderte Anpassungen an Blitzschutz, Trafostation und Gebäudetechnik. Lösung: ~130 kWp Photovoltaik mit Batteriespeicher (80–120 kWh), integriert in Blitzschutz- und Sicherheitstechnik, kombiniert mit Mieterstrom für rund fünf Mieteinheiten. Nutzen: deutlich höhere Eigennutzung, weniger Netzbezug, transparente Kostenstruktur über alle Gewerke."
+  },
+  {
+    "id": "case-03",
+    "type": "case",
+    "branche": "Produktionsbetrieb · hoher Tagesverbrauch · NRW",
+    "headline": "531 kWp + Peak Shaving für einen Industriestandort mit 3 Mio. kWh/Jahr",
+    "topic": "Großdach-PV mit Speicher und Lastspitzenkappung im produzierenden Gewerbe",
+    "link": "https://mainilkanjo.de/",
+    "body": "Industriestandort mit rund 3 Mio. kWh Stromverbrauch pro Jahr, überwiegend tagsüber, Lastspitzen über 440 kW. Lösung: 531 kWp Photovoltaik mit Batteriespeicher und Peak-Shaving-Strategie, Strom fast vollständig im Betrieb genutzt; energiebezogene Investition rund 549.000 €. Nutzen: ~520.000 kWh Eigenerzeugung/Jahr, Stromwert ca. 83.000–99.000 €/Jahr plus Netzentgelt-Optimierung durch Lastspitzenkappung."
+  },
+  {
+    "id": "case-04",
+    "type": "case",
+    "branche": "Produzierendes Gewerbe · statisch begrenztes Dach · NRW",
+    "headline": "237 kWp Leichtbau-PV trotz statisch begrenztem Dach – 8 Jahre Amortisation",
+    "topic": "Verklebte Leichtbau-PV ohne Dachdurchdringung plus Speicher und Lastmanagement",
+    "link": "https://mainilkanjo.de/",
+    "body": "Rund 436.000 kWh Jahresverbrauch bei Lastspitzen bis 212 kW; Dach statisch begrenzt – ohne Dachdurchdringung, ohne ballastierte Montage. Lösung: 237 kWp Photovoltaik als verklebtes Leichtbausystem, ~300 kWh Speicher, Energiemanagement zur Lastspitzenkappung. Nutzen: rund 80 % Eigenverbrauch, jährliche Einsparung ca. 39.000–45.000 €, ~8 Jahre Amortisation, über 10 Jahre mehr als 400.000 € Einsparpotenzial."
+  },
+  {
+    "id": "case-05",
+    "type": "case",
+    "branche": "Logistik & Spedition · Immobilien-Wertsteigerung · NRW",
+    "headline": "600 kWp im Eigeninvest steigern den Immobilienwert vor dem Verkauf",
+    "topic": "Eigeninvestition statt Dachpacht plus Energy Sharing fürs Gewerbegebiet",
+    "link": "https://mainilkanjo.de/",
+    "body": "Betriebsimmobilie sollte im Zuge eines Eigentümerwechsels verkauft werden; reine Dachpacht hätte den Wert kaum erhöht. Lösung: Eigeninvestition in 600 kWp Photovoltaik über Mietkauf, intelligentes Energiemanagement, Energy-Sharing-Modell fürs umliegende Gewerbegebiet (~3.200 m² Dach, ~550.000 kWh/Jahr). Nutzen: vertraglich abgesicherter Cashflow ~100.000 €/Jahr; kapitalisiert eine Netto-Wertsteigerung der Immobilie von ca. 200.000–350.000 € im Verkaufsszenario."
+  },
+  {
+    "id": "case-06",
+    "type": "case",
+    "branche": "Spedition · E-LKW-Depotladung · NRW",
+    "headline": "E-LKW laden ohne teuren Netzausbau – Speicher + Börsenstrom als Puffer",
+    "topic": "DC-Schnellladeinfrastruktur mit Lastmanagement, Gewerbespeicher und dynamischem Börsenstrom",
+    "link": "https://mainilkanjo.de/",
+    "body": "Speditionsbetrieb mit zwei E-Lkw erweitert die Flotte um einen dritten; nächtlicher Energiebedarf steigt, Netzanschluss (~100–250 kW) soll nicht teuer ausgebaut werden. Lösung: DC-Schnellladen (2×150 kW + 1×350 kW) mit dynamischem Lastmanagement, ~600 kWh LFP-Gewerbespeicher als Puffer, dynamischer Börsenstrombezug (EPEX Spot, Day-Ahead/Intraday) über ein EMS; PV-Erweiterung baulich vorbereitet. Nutzen: Lastspitzen geglättet, teurer Netzausbau vermieden, niedrigere Energiekosten durch Spotmarkt-Nutzung."
+  }
+]

@@ -1,0 +1,51 @@
+name: Beitrag veröffentlichen / verwerfen
+
+on:
+  repository_dispatch:
+    types: [social-publish, social-reject]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish-${{ github.event.client_payload.slug }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - run: npm ci
+
+      - name: Aktion ableiten
+        id: act
+        run: |
+          if [ "${{ github.event.action }}" = "social-reject" ]; then
+            echo "action=reject" >> "$GITHUB_OUTPUT"
+          else
+            echo "action=publish" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Veröffentlichen / Verwerfen
+        env:
+          SLUG: ${{ github.event.client_payload.slug }}
+          ACTION: ${{ steps.act.outputs.action }}
+          IG_USER_ID: ${{ secrets.IG_USER_ID }}
+          FB_PAGE_ID: ${{ secrets.FB_PAGE_ID }}
+          META_ACCESS_TOKEN: ${{ secrets.META_ACCESS_TOKEN }}
+          IMAGE_BASE_URL: ${{ secrets.IMAGE_BASE_URL }}
+        run: npm run --silent publish
+
+      - name: Ergebnis committen & pushen
+        run: |
+          git config user.name "mainilkanjo-social-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add pending published rejected || true
+          git commit -m "${{ steps.act.outputs.action }}: ${{ github.event.client_payload.slug }}" || echo "nichts zu committen"
+          git push

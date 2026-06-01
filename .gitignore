@@ -1,0 +1,6 @@
+node_modules/
+.env
+dry-run/
+config/logo.png.bak
+*.log
+.DS_Store

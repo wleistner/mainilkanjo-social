@@ -1,0 +1,46 @@
+{
+  "name": "mainilkanjo",
+  "domain": "mainilkanjo.de",
+  "positioning": "Entwickler wirtschaftlicher Energiekonzepte für Unternehmen – nicht Solarverkäufer.",
+  "claim": "Energie neu gedacht. Wirtschaftlichkeit neu definiert.",
+  "audience": "Geschäftsführer:innen von KMU/Gewerbe in NRW (Köln/Bonn) mit 6–7-stelligem Investitionsrahmen.",
+  "voice": {
+    "tone": "sachlich, kompetent, wirtschaftlich denkend, ohne Hype und ohne Verkäufersprech. Nutzen und Zahlen vor Technik-Buzzwords.",
+    "do": [
+      "konkreten wirtschaftlichen Nutzen benennen (Einsparung, Amortisation, Wertsteigerung)",
+      "auf Konzept/Analyse statt Produktverkauf abheben",
+      "eine klare, ruhige Handlungsaufforderung setzen",
+      "deutsche Fachbegriffe korrekt verwenden (Peak Shaving, Eigenverbrauch, Lastmanagement)"
+    ],
+    "dont": [
+      "keine Übertreibungen, keine Ausrufezeichen-Ketten",
+      "keine erfundenen Zahlen – nur Aussagen, die durch die Quelle gedeckt sind",
+      "kein Solar-Hard-Selling",
+      "keine Emojis-Flut (max. 1–2 dezente)"
+    ]
+  },
+  "cta": "Kostenfreie Erstanalyse anfragen → mainilkanjo.de",
+  "hashtags": [
+    "#Energiekonzept", "#PhotovoltaikGewerbe", "#Batteriespeicher", "#PeakShaving",
+    "#Eigenverbrauch", "#NRW", "#Mittelstand", "#Energiewende", "#Gewerbestrom", "#mainilkanjo"
+  ],
+  "colors": {
+    "ink": "#0B1F33",
+    "blue": "#003A6F",
+    "blueDeep": "#072039",
+    "green": "#7DB82D",
+    "amber": "#FFC107",
+    "muted": "#5A6B7B",
+    "bgSoft": "#f5f8fb",
+    "white": "#ffffff"
+  },
+  "fonts": {
+    "heading": "Montserrat",
+    "body": "Inter"
+  },
+  "image": {
+    "size": "1024x1024",
+    "quality": "medium",
+    "stylePrompt": "Hochwertige, fotorealistische Aufnahme bzw. cleanes 3D-Render im Stil moderner Corporate-Energie-Kommunikation. Motiv passend zum Thema: gewerbliche Flachdächer mit Photovoltaik, Industriehallen, Batteriespeicher-Container, Umspannstation, Logistikzentren in NRW, ruhiges Tageslicht oder blaue Stunde. Bildsprache: aufgeräumt, premium, vertrauenswürdig, viel Tiefe und Negativraum oben und unten für späteren Text-Overlay. Farbstimmung harmoniert mit Tiefblau #003A6F und einem Grün-Akzent #7DB82D. WICHTIG: KEINE Schrift, KEINE Buchstaben, KEIN Logo, KEINE Wasserzeichen, KEINE Menschen im Vordergrund mit erkennbaren Gesichtern."
+  }
+}

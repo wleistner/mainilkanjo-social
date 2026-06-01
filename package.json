@@ -1,0 +1,17 @@
+{
+  "name": "mainilkanjo-social",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Automatisierte Instagram/Facebook-Pipeline für mainilkanjo.de – Content aus WordPress-Blog & Fallstudien, KI-Motive via OpenAI gpt-image-1, E-Mail-Freigabe, Meta-Graph-Publishing.",
+  "scripts": {
+    "generate": "node --env-file-if-exists=.env scripts/generate.mjs",
+    "notify": "node --env-file-if-exists=.env scripts/notify.mjs",
+    "publish": "node --env-file-if-exists=.env scripts/publish.mjs",
+    "dry-run": "DRY_RUN=1 node --env-file-if-exists=.env scripts/generate.mjs"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.16",
+    "sharp": "^0.33.5"
+  }
+}
