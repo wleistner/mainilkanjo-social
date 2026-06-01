@@ -77,7 +77,7 @@ export async function composeMotive({ imageBuffer, kicker, headline, brand }) {
 
   const layers = [{ input: Buffer.from(svg) }];
   if (hasLogo) {
-    const logo = await sharp(logoPath).resize({ height: 88, fit: 'inside' }).png().toBuffer();
+    const logo = await sharp(logoPath).resize({ height: 120, fit: 'inside' }).png().toBuffer();
     layers.unshift({ input: logo, left: 72, top: 56 });
   }
 
