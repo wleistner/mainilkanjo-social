@@ -3,26 +3,28 @@
 Erzeugt ~2 Beiträge pro Woche **vollautomatisch**: Content aus dem WordPress-Blog
 und den anonymisierten Fallstudien → Caption im mainilkanjo-Markenton → KI-Motiv
 über **OpenAI `gpt-image-1`** → markengerechte grafische Aufbereitung → **Freigabe per
-E-Mail-Button** → automatische Veröffentlichung auf Instagram **und** Facebook.
+Klick in GitHub** → automatische Veröffentlichung auf Instagram **und** Facebook.
 
 ```
 GitHub Actions Cron (Di + Do)
-  └─ generate.mjs   Content wählen · Caption texten · Motiv generieren · Marken-Overlay
-       └─ git push  (Bild bekommt öffentliche URL)
-            └─ notify.mjs  Freigabe-Mail mit ✅/✕ Buttons an dich
-                 └─ du klickst ✅ → social-approve.php (auf dem WP-Server)
-                      └─ repository_dispatch → publish.mjs → Instagram + Facebook
+  └─ Job "generate"   Content wählen · Caption texten · Motiv generieren · Marken-Overlay
+       └─ git push  (Bild bekommt öffentliche URL) + Vorschau in der Lauf-Zusammenfassung
+            └─ Job "publish"  wartet hinter Environment "freigabe" (Pflicht-Freigabe)
+                 └─ GitHub mailt "Freigabe nötig" → du klickst 1× "Approve and deploy"
+                      └─ publish.mjs → Instagram + Facebook
 ```
 
-Kein eigener Server nötig. Laufende Kosten: ~0,30–0,50 € pro Woche (OpenAI-Bilder),
-GitHub Actions & E-Mail sind kostenlos.
+Kein eigener Server, kein E-Mail-Setup, keine PHP-Datei nötig – die Freigabe läuft
+komplett über GitHubs eingebaute Deployment-Freigabe. Laufende Kosten: ~0,30–0,50 €
+pro Woche (OpenAI-Bilder), GitHub Actions ist kostenlos.
 
 ---
 
 ## Was läuft schon, was musst DU einrichten
 
-Der komplette Code steht. Damit es live geht, brauchst du **vier Zugänge** und musst
-die zugehörigen **GitHub Secrets** + die **PHP-Datei auf dem WP-Server** eintragen.
+Der komplette Code steht. Damit es live geht, brauchst du **drei Zugänge**
+(GitHub-Repo, OpenAI, Meta) und musst die zugehörigen **GitHub Secrets** eintragen
+sowie **einmalig die Freigabe-Umgebung** anlegen.
 
 ### 1. GitHub-Repo anlegen
 1. Neues Repo erstellen, z. B. `mainilkanjo-social`. **Öffentlich** ist am einfachsten
@@ -42,6 +44,9 @@ die zugehörigen **GitHub Secrets** + die **PHP-Datei auf dem WP-Server** eintra
 ### 2. OpenAI-API-Key  (Bilder + Caption)
 - platform.openai.com → API Keys → neuen Key erstellen.
 - Etwas Guthaben aufladen. `gpt-image-1` kostet bei `quality: medium` ~0,04 $/Bild.
+
+> ⚠️ Damit `gpt-image-1` nutzbar ist, muss deine OpenAI-Organisation ggf. einmal verifiziert sein.
+> Bei Bild-Fehlern: in den OpenAI-Settings *Verify Organization* prüfen.
 
 ### 3. Meta: Instagram + Facebook posten (Graph API)
 > Voraussetzung (laut deiner Angabe vorhanden): **Facebook-Seite** + **Instagram-Business-Account**,
@@ -63,44 +68,26 @@ Token + IDs besorgen:
    → das Ergebnis ist dein **`META_ACCESS_TOKEN`** (langlebiges Page-Token, ~60 Tage;
    ein System-User-Token im Business Manager hält unbegrenzt – empfohlen, siehe Meta-Doku).
 
-> ⚠️ Damit `gpt-image-1` nutzbar ist, muss deine OpenAI-Organisation ggf. einmal verifiziert sein.
-> Bei Bild-Fehlern: in den OpenAI-Settings *Verify Organization* prüfen.
+### 4. Freigabe-Umgebung anlegen  (das ist die Freigabe – einmalig, ~30 Sek.)
+Repo → *Settings → Environments → New environment* → Name exakt **`freigabe`** →
+*Configure environment* → Häkchen bei **Required reviewers** → dich selbst hinzufügen →
+**Save protection rules**.
 
-### 4. E-Mail-Versand (SMTP)
-Zugangsdaten deines Postfachs `welcome@mainilkanjo.de` (Host/Port/User/Passwort).
-Die Freigabe-Mail wird an `REVIEW_EMAIL_TO` geschickt.
+Damit wartet der Veröffentlichen-Job, bis du freigibst. GitHub schickt dir bei jedem
+neuen Beitrag automatisch eine „Freigabe nötig"-Mail an deine GitHub-Adresse.
 
-### 5. Freigabe-Endpoint auf den WP-Server legen
-1. `approve/social-approve.php` per FTP/SFTP ins Web-Root legen
-   → erreichbar als `https://mainilkanjo.de/social-approve.php`.
-2. Daneben `social-approve-config.php` anlegen (NICHT ins GitHub-Repo!):
-   ```php
-   <?php
-   define('SOCIAL_APPROVE_SECRET', 'GLEICHES-Geheimnis-wie-APPROVE_SECRET');
-   define('SOCIAL_GH_OWNER', '<DEIN-GITHUB-NAME>');
-   define('SOCIAL_GH_REPO',  'mainilkanjo-social');
-   define('SOCIAL_GH_TOKEN', 'github_pat_...'); // siehe Schritt 6
-   ```
-
-### 6. GitHub Fine-grained PAT (damit der Button den Workflow auslösen darf)
-- github.com → *Settings → Developer settings → Fine-grained tokens* → neuer Token,
-  nur auf das Repo `mainilkanjo-social`, Berechtigungen **Contents: Read and write**
-  und **Actions: Read and write**. → als `SOCIAL_GH_TOKEN` in die PHP-Config eintragen.
-
-### 7. GitHub Secrets eintragen
+### 5. GitHub Secrets eintragen
 Repo → *Settings → Secrets and variables → Actions → New repository secret*:
 
 | Secret | Wert |
 |---|---|
 | `OPENAI_API_KEY` | dein OpenAI-Key |
-| `SMTP_HOST` / `SMTP_PORT` / `SMTP_USER` / `SMTP_PASS` / `SMTP_FROM` | Postfach-Daten |
-| `REVIEW_EMAIL_TO` | wohin die Freigabe-Mail geht |
-| `APPROVE_ENDPOINT` | `https://mainilkanjo.de/social-approve.php` |
-| `APPROVE_SECRET` | langes Zufallsgeheimnis (identisch zur PHP-Config) |
 | `IG_USER_ID` | Instagram-Business-Account-ID |
 | `FB_PAGE_ID` | Facebook-Seiten-ID |
 | `META_ACCESS_TOKEN` | langlebiges Page-/System-User-Token |
 | `IMAGE_BASE_URL` | *(optional, nur bei privatem Repo)* |
+
+Mehr ist nicht nötig – kein SMTP, kein zweiter Token, kein `APPROVE_SECRET`.
 
 ---
 
@@ -108,15 +95,17 @@ Repo → *Settings → Secrets and variables → Actions → New repository secr
 ```bash
 npm install
 cp .env.example .env   # OPENAI_API_KEY eintragen
-npm run dry-run        # erzeugt Caption + fertiges Motiv in dry-run/, postet/mailt NICHTS
+npm run dry-run        # erzeugt Caption + fertiges Motiv in dry-run/, postet NICHTS
 ```
 Schau dir `dry-run/<slug>.jpg` und die ausgegebene Caption an.
 
 ## Echter Lauf
-- **Manuell auslösen:** Repo → *Actions → „Beitrag erzeugen & zur Freigabe mailen" → Run workflow*.
+- **Manuell auslösen:** Repo → *Actions → „Beitrag erzeugen & freigeben" → Run workflow*.
 - **Automatisch:** läuft Di + Do 07:00 UTC (in `.github/workflows/generate.yml` änderbar).
-- Du bekommst die Mail → klickst **✅ Veröffentlichen** → Beitrag geht auf IG + FB live.
-  Klickst du nichts, passiert nichts.
+- Nach dem `generate`-Job: oben auf der Lauf-Seite **„Review deployments" → „freigabe"
+  ankreuzen → „Approve and deploy"** → Beitrag geht auf IG + FB live.
+  Bild + Caption siehst du vorher in der **Zusammenfassung** des Laufs.
+  Klickst du **„Reject"** (oder nichts), passiert nichts.
 
 ## Stellschrauben
 - **Markenton / Hashtags / CTA:** `config/brand.json`
@@ -129,5 +118,7 @@ Schau dir `dry-run/<slug>.jpg` und die ausgegebene Caption an.
 
 ## Wichtig / Grenzen
 - Instagram-API-Posting geht **nur** mit Business-/Creator-Account.
-- Motive werden generativ erstellt – die Freigabe per Mail ist bewusst der Qualitäts-Check.
+- Motive werden generativ erstellt – die Freigabe per Klick ist bewusst der Qualitäts-Check.
 - Captions nutzen nur Fakten aus Blog/Fallstudie; trotzdem vor Freigabe kurz drüberlesen.
+- Lehnst du einen Beitrag mit „Reject" ab, bleibt der Entwurf in `pending/` liegen
+  (kann bei Bedarf manuell gelöscht werden).
